@@ -1,0 +1,8 @@
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/dto/response/GenreResponse.java
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/repository/GenreRepository.java
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/Main.java
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/service/GenreService.java
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/dto/GenreDto.java
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/repository/tables/GenreByNameRow.java
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/resource/GenreResource.java
+/Users/Scott/dev/github/Genre-Service/src/main/java/com/stagegage/genreService/repository/cassandra/CassandraConfig.java
