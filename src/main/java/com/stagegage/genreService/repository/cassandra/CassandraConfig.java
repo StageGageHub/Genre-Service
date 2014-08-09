@@ -8,17 +8,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.cassandra.config.java.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
+import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
+import org.springframework.data.cassandra.config.SchemaAction;
+import org.springframework.data.cassandra.convert.CassandraConverter;
+import org.springframework.data.cassandra.convert.MappingCassandraConverter;
+import org.springframework.data.cassandra.mapping.BasicCassandraMappingContext;
+import org.springframework.data.cassandra.mapping.CassandraMappingContext;
+import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
 @PropertySource(value = { "classpath:cassandra.properties" })
-public class CassandraConfig extends AbstractCassandraConfiguration {
+@EnableCassandraRepositories(basePackages = { "org.spring.cassandra.example.repo" })
+public class CassandraConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(CassandraConfig.class);
 
     @Autowired
     private Environment env;
 
+    // TODO: Can I remove crap from here???
 
     @Bean
     public CqlTemplate CqlTemplate() {
@@ -32,7 +41,41 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
         return null;
     }
 
-    @Override
+//    @Override
+    @Bean
+    public CassandraClusterFactoryBean cluster() {
+
+        CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();
+        cluster.setContactPoints(env.getProperty("cassandra.contactpoints"));
+        cluster.setPort(Integer.parseInt(env.getProperty("cassandra.port")));
+
+        return cluster;
+    }
+
+    @Bean
+    public CassandraMappingContext mappingContext() {
+        return new BasicCassandraMappingContext();
+    }
+
+    @Bean
+    public CassandraConverter converter() {
+        return new MappingCassandraConverter(mappingContext());
+    }
+
+//    @Override
+    @Bean
+    public CassandraSessionFactoryBean session() throws Exception {
+
+        CassandraSessionFactoryBean session = new CassandraSessionFactoryBean();
+        session.setCluster(cluster().getObject());
+        session.setKeyspaceName(env.getProperty("cassandra.keyspace"));
+        session.setConverter(converter());
+        session.setSchemaAction(SchemaAction.NONE);
+
+        return session;
+    }
+
+//    @Override
     protected String getKeyspaceName() {
         return env.getProperty("cassandra.keyspace");
     }
