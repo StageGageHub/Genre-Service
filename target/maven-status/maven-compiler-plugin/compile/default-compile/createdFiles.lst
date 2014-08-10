@@ -1,11 +1,8 @@
-com/stagegage/genreService/servlet/FestivalServletInitializer.class
-com/stagegage/genreService/repository/GenreRepository$2.class
-com/stagegage/genreService/resource/GenreResource.class
-com/stagegage/genreService/repository/GenreRepository$1.class
-com/stagegage/genreService/dto/response/GenreResponse.class
 com/stagegage/genreService/repository/GenreRepository.class
-com/stagegage/genreService/repository/tables/GenreByNameRow.class
+com/stagegage/genreService/servlet/FestivalServletInitializer.class
 com/stagegage/genreService/service/GenreService.class
-com/stagegage/genreService/repository/cassandra/CassandraConfig.class
-com/stagegage/genreService/dto/GenreDto.class
+com/stagegage/genreService/resource/GenreResource.class
+com/stagegage/genreService/repository/MongoConfig.class
 com/stagegage/genreService/Main.class
+com/stagegage/genreService/dto/response/GenreResponse.class
+com/stagegage/genreService/dto/GenreDto.class
