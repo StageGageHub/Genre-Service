@@ -35,4 +35,9 @@ public class GenreResource {
     public GenreResponse createGenre(@RequestParam String name) {
         return GenreResponse.toResponse(genreService.createGenre(name));
     }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    public void deleteGenre(@RequestParam String name) {
+        genreService.deleteGenre(name);
+    }
 }

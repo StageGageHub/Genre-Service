@@ -10,3 +10,13 @@ target/**
 *.class
 
 *.jar
+
+*.class
+
+*.class
+
+target/classes/com/stagegage/genreService/repository/GenreRepository.class
+
+target/classes/com/stagegage/genreService/resource/GenreResource.class
+
+target/classes/com/stagegage/genreService/service/GenreService.class

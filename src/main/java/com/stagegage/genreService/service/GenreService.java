@@ -25,4 +25,8 @@ public class GenreService {
     public GenreDto createGenre(String name) {
         return genreRepository.upsert(new GenreDto(name));
     }
+
+    public void deleteGenre(String name) {
+        genreRepository.delete(new GenreDto(name));
+    }
 }

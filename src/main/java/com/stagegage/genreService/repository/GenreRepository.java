@@ -56,4 +56,8 @@ public class GenreRepository {
 
         return genreDto;
     }
+
+    public void delete(GenreDto genreDto) {
+        genres.remove(genreDto.toDBO());
+    }
 }
