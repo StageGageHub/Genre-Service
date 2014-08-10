@@ -23,6 +23,6 @@ public class GenreService {
     }
 
     public GenreDto createGenre(String name) {
-        return genreRepository.createOrSelect(new GenreDto(name));
+        return genreRepository.upsert(new GenreDto(name));
     }
 }

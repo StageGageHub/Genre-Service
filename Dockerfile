@@ -1,21 +1,9 @@
-reated to run stagegage java services
-FROM ubuntu
+# Created to run stagegage java services
+FROM phonyphonecall/spring-boot-base
 MAINTAINER scott_hendrickson
 
-# We'll need maven to run spring boot
-RUN apt-get update
-RUN apt-get install maven
-
-# expose spring-boot default port
-EXPOSE 8080
-
-# the service home folder
-RUN mkdir /usr/local/service
 # pull in the service
-ADD https://github.com/StageGageHub/Genre-Service /usr/local/service
-
+RUN git clone https://github.com/StageGageHub/Genre-Service.git
 
 #Spin up spring boot on startup
-WORKDIR /usr/local/service/
-CMD "mvn spring-boot:run"
-
+ENTRYPOINT ["mvn","-f","/Genre-Service/pom.xml"]

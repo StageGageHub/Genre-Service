@@ -1,9 +1,7 @@
 package com.stagegage.genreService.dto;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 /**
  * Created by Scott on 7/12/14.
@@ -12,36 +10,24 @@ import java.util.UUID;
  */
 public class GenreDto {
 
-    private final UUID id;
     private final String genre;
 
 
-    public GenreDto(UUID id, final String genre) {
-        this.id = id;
+    public GenreDto(final String genre) {
         this.genre = genre;
     }
 
-    public GenreDto(String genre) {
-        this.id = UUID.randomUUID();
-        this.genre = genre;
-    }
-
-    public static Set<GenreDto> toGenreSet(Map<UUID, String> genreMap) {
-        if(genreMap == null) return null;
-
-        Set<GenreDto> genres = new HashSet<GenreDto>();
-        for(Map.Entry<UUID, String> entry : genreMap.entrySet()) {
-            genres.add(new GenreDto(entry.getKey(), entry.getValue()));
-        }
-
-        return genres;
-    }
-
-    public UUID getId() {
-        return id;
-    }
 
     public String getGenre() {
         return genre;
+    }
+
+    public static GenreDto toGenreDto(DBObject genreDBO) {
+        return new GenreDto((String) genreDBO.removeField("genre"));
+    }
+
+    public DBObject toDBO() {
+        return new BasicDBObject()
+                .append("genre", genre);
     }
 }

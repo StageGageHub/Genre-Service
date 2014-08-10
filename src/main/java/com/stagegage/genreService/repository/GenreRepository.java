@@ -1,18 +1,12 @@
 package com.stagegage.genreService.repository;
 
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.exceptions.DriverException;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.mongodb.*;
 import com.stagegage.genreService.dto.GenreDto;
-import com.stagegage.genreService.repository.tables.GenreByNameRow;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cassandra.core.CqlTemplate;
-import org.springframework.cassandra.core.RowMapper;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,62 +14,46 @@ import java.util.List;
  *
  * @author Scott Hendrickson
  */
-@Repository
-@Configuration
-@PropertySource(value = { "classpath:cassandra.properties" })
+@Component
 public class GenreRepository {
-
-    @Autowired
-    private CqlTemplate template;
 
     @Autowired
     private Environment env;
 
-    public List<GenreDto> getAllGenres() {
-        String select = QueryBuilder.select("genre", "id")
-                .from("genres_by_name")
-                .toString();
+    private MongoConfig dbConfig;
+    private DB db;
+    private DBCollection genres;
 
-        List<GenreByNameRow> genreRows = template.query(select, new RowMapper<GenreByNameRow>() {
+    public GenreRepository() {
+        dbConfig = new MongoConfig();
 
-            @Override
-            public GenreByNameRow mapRow(Row row, int i) throws DriverException {
-                return new GenreByNameRow(
-                        row.getString("genre"),
-                        row.getUUID("id")
-                );
-            }
-        });
+        this.db = dbConfig.createDB();
+        if(db == null)
+            System.out.println("Could not create DB");
+        this.genres = db.getCollection("genres");
 
-        return GenreByNameRow.toDto(genreRows);
+        // Make sure connection is ok
+        db.getStats();
     }
 
-    public GenreDto createOrSelect(GenreDto genreDto) {
-        String select = QueryBuilder.select("genre", "id")
-                                    .from("genres_by_name")
-                                    .where(QueryBuilder.eq("genre", genreDto.getGenre())).toString();
-
-        List<GenreByNameRow> genreRows = template.query(select, new RowMapper<GenreByNameRow>() {
-
-            @Override
-            public GenreByNameRow mapRow(Row row, int i) throws DriverException {
-                return new GenreByNameRow(
-                        row.getString("genre"),
-                        row.getUUID("id")
-                );
+    public List<GenreDto> getAllGenres() {
+        List<GenreDto> genreDtos = new ArrayList<GenreDto>();
+        DBCursor cursor = genres.find();
+        try {
+            while(cursor.hasNext()) {
+                DBObject genre = cursor.next();
+                genreDtos.add(GenreDto.toGenreDto(genre));
             }
-        });
-
-        // Boo... read before write... sorta
-        if(genreRows == null || genreRows.isEmpty()) {
-            String insert = QueryBuilder.insertInto(env.getProperty("cassandra.keyspace"), "genres_by_name")
-                    .value("id", genreDto.getId())
-                    .value("genre", genreDto.getGenre()).toString();
-
-            template.execute(insert);
-            return genreDto;
-        } else {
-            return GenreByNameRow.toDto(genreRows.get(0));
+        } finally {
+            cursor.close();
         }
+        return genreDtos;
+    }
+
+    public GenreDto upsert(GenreDto genreDto) {
+        // True for upsert, false for multi. We dont need to update all, as only one will match anyway
+        genres.update(genreDto.toDBO(), genreDto.toDBO(), true, false);
+
+        return genreDto;
     }
 }
