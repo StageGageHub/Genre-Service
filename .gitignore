@@ -2,11 +2,11 @@
 .idea/**
 target/**
 **.class
+**.lst
 
-*.iml
 
-*.iml
+.idea/misc.xml
 
 *.class
 
-*.war
+*.jar
